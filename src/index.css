@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #1e3a8a;
-  --color-secondary: #10b981;
+  --color-primary: #1e3a8a; /* Dark Blue from text */
+  --color-secondary: #22c55e; /* Green from leaf */
+  --color-accent: #f97316; /* Orange from flower */
+  --color-highlight: #eab308; /* Yellow from flower */
   --color-dark-bg: #020617;
   --color-dark-section: #0b1120;
   --color-light-bg: #f9fafb;
-  --color-gold: #d4af37;
   --font-inter: "Inter", sans-serif;
   --font-poppins: "Poppins", sans-serif;
 }

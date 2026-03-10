@@ -53,7 +53,7 @@ export default function Services() {
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <FadeIn>
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600 mb-4">
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4">
                 Nos Activités
               </div>
               <h1 className="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl text-slate-900 mb-6 leading-tight">
@@ -72,11 +72,11 @@ export default function Services() {
                   {/* Hover gradient background effect */}
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 rounded-bl-[100px] transition-opacity duration-500`} />
                   
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 bg-gradient-to-br ${service.color} text-white shadow-lg shadow-${service.color.split(' ')[1]}/30 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 bg-gradient-to-br ${service.color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     {service.icon}
                   </div>
                   
-                  <h3 className="font-poppins font-bold text-2xl text-slate-900 mb-4 group-hover:text-blue-900 transition-colors">
+                  <h3 className="font-poppins font-bold text-2xl text-slate-900 mb-4 group-hover:text-[var(--color-primary)] transition-colors">
                     {service.title}
                   </h3>
                   
@@ -97,7 +97,7 @@ export default function Services() {
       </section>
 
       {/* Methodology Banner */}
-      <section className="py-24 bg-blue-900 text-white relative overflow-hidden">
+      <section className="py-24 bg-[var(--color-primary)] text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTExIDBIMXYxMWgxMFYwek0xMyAwaDExdjExSDEzVjB6TTExIDEzSDF2MTFoMTBWMTN6TTEzIDEzaDExdjExSDEzVjEzIiBmaWxsPSIjZmZmZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')] opacity-[0.03]" />
         
         <div className="container mx-auto px-6 relative z-10">
