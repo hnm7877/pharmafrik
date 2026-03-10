@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -13,6 +14,36 @@ import {
 } from "lucide-react";
 import { AnimatedPage, FadeIn } from "../components/Layout";
 import { Carousel } from "../components/Carousel";
+
+function Counter({ end, duration = 2000 }: { end: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const percentage = Math.min(progress / duration, 1);
+
+      // Easing function for smoother animation
+      const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+
+      setCount(Math.floor(easeOutQuart(percentage) * end));
+
+      if (progress < duration) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [end, duration]);
+
+  return <>{count}</>;
+}
 
 export default function Home() {
   const activities = [
@@ -150,14 +181,14 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-secondary)] to-[var(--color-primary)] rounded-[2rem] rotate-3 opacity-20 transform scale-105" />
                 <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2574&auto=format&fit=crop"
-                    alt="Équipe PHARM'AFRIK en réunion"
+                    src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=2091&auto=format&fit=crop"
+                    alt="Médecins en consultation"
                     className="w-full h-auto object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)]/80 to-transparent flex items-end p-8">
                     <div className="text-white">
                       <div className="font-bold text-2xl mb-2">
-                        15+ Ans d'Expérience
+                        <Counter end={15} />+ Ans d'Expérience
                       </div>
                       <div className="text-slate-200">
                         Une expertise reconnue en Afrique de l'Ouest et Centrale
