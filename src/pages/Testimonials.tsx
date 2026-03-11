@@ -1,74 +1,123 @@
-import { Quote, Building2, MapPin, Star } from 'lucide-react';
-import { AnimatedPage, FadeIn } from '../components/Layout';
+import { Quote, Building2, MapPin, Star, X } from "lucide-react";
+import { AnimatedPage, FadeIn } from "../components/Layout";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const testimonialsList = [
   // Témoignages réels de pharmafrik.com
   {
-    quote: "J'ai été plus que satisfait de l'accompagnement fourni par Pharm'Afrik et son équipe dans le cadre du suivi de notre projet.",
+    quote:
+      "J'ai été plus que satisfait de l'accompagnement fourni par Pharm'Afrik et son équipe dans le cadre du suivi de notre projet.",
     author: "Soro Stéphane",
     role: "DG Santé+",
-    location: "Côte d'Ivoire"
+    location: "Côte d'Ivoire",
+    image: "/images/Soro Stéphane.jpg",
   },
   {
-    quote: "Pharm'Afrik m'a accompagné dans toutes mes démarches dans l'obtention de mon visa pour mes soins médicaux aux USA.",
+    quote:
+      "Pharm'Afrik m'a accompagné dans toutes mes démarches dans l'obtention de mon visa pour mes soins médicaux aux USA.",
     author: "Dakoury Pierre",
     role: "DAF e-Sport",
-    location: "Côte d'Ivoire"
+    location: "Côte d'Ivoire",
+    image: "/images/Dakoury Pierre.jpg",
   },
   {
-    quote: "Pharm'Afrik, grâce à son coaching et son suivi de mon équipe nous a permis d'augmenter notre chiffre d'affaire et notre portefeuille client.",
+    quote:
+      "Pharm'Afrik, grâce à son coaching et son suivi de mon équipe nous a permis d'augmenter notre chiffre d'affaire et notre portefeuille client.",
     author: "Guei Serverine",
     role: "Directrice des ventes",
-    location: "Côte d'Ivoire"
+    location: "Côte d'Ivoire",
+    image: "/images/Guei Serverine.jpg",
   },
   {
-    quote: "Pharm'Afrik nous a été d'une grande aide dans le processus de réalisation de nos tests clinique en plus de s'être occupé de la rédaction et de l'édition des notices de nos nouveaux produits.",
+    quote:
+      "Pharm'Afrik nous a été d'une grande aide dans le processus de réalisation de nos tests clinique en plus de s'être occupé de la rédaction et de l'édition des notices de nos nouveaux produits.",
     author: "Kouakou Mélanie",
     role: "Directrice de pharmatech",
-    location: "Côte d'Ivoire"
+    location: "Côte d'Ivoire",
+    image: "/images/Kouakou Mélanie.jpg",
   },
   // Témoignages professionnels supplémentaires
   {
-    quote: "PHARM'AFRIK nous a accompagnés dans le lancement de plusieurs gammes en Afrique de l'Ouest avec une excellente compréhension des enjeux terrain.",
+    quote:
+      "PHARM'AFRIK nous a accompagnés dans le lancement de plusieurs gammes en Afrique de l'Ouest avec une excellente compréhension des enjeux terrain.",
     author: "Directeur Afrique Francophone",
     role: "Laboratoire pharmaceutique international",
-    location: "Dakar, Sénégal"
+    location: "Dakar, Sénégal",
   },
   {
-    quote: "Une équipe réactive, proche de nos filiales locales, qui sait transformer la stratégie en actions concrètes auprès des prescripteurs.",
+    quote:
+      "Une équipe réactive, proche de nos filiales locales, qui sait transformer la stratégie en actions concrètes auprès des prescripteurs.",
     author: "Responsable Marketing Régional",
     role: "Groupe de nutrition infantile",
-    location: "Abidjan, Côte d'Ivoire"
+    location: "Abidjan, Côte d'Ivoire",
   },
   {
-    quote: "Leur maîtrise des dossiers réglementaires et des pratiques de la région nous a permis de sécuriser nos enregistrements plus rapidement et sans accroc.",
+    quote:
+      "Leur maîtrise des dossiers réglementaires et des pratiques de la région nous a permis de sécuriser nos enregistrements plus rapidement et sans accroc.",
     author: "Responsable Affaires Réglementaires",
     role: "Laboratoire génériqueur",
-    location: "Douala, Cameroun"
+    location: "Douala, Cameroun",
   },
   {
-    quote: "Un partenaire de confiance qui a su nous fournir des données de marché qualitatives là où les données fiables sont rares. Leurs insights sont précieux.",
+    quote:
+      "Un partenaire de confiance qui a su nous fournir des données de marché qualitatives là où les données fiables sont rares. Leurs insights sont précieux.",
     author: "Business Unit Manager",
     role: "Acteur de la cardiologie",
-    location: "Paris, France / Afrique de l'Ouest"
+    location: "Paris, France / Afrique de l'Ouest",
   },
   {
-    quote: "Le coaching de nos équipes de visite médicale a eu un impact direct sur nos parts de marché locales, avec des KPI enfin mesurables.",
+    quote:
+      "Le coaching de nos équipes de visite médicale a eu un impact direct sur nos parts de marché locales, avec des KPI enfin mesurables.",
     author: "Directeur Commercial",
     role: "Laboratoire panafricain",
-    location: "Lomé, Togo"
+    location: "Lomé, Togo",
   },
   {
-    quote: "Expertise technique et grande capacité d'adaptation aux réalités de chaque pays, du Mali au Gabon.",
+    quote:
+      "Expertise technique et grande capacité d'adaptation aux réalités de chaque pays, du Mali au Gabon.",
     author: "Medical Affairs Director",
     role: "Laboratoire d'oncologie",
-    location: "Casablanca, Maroc / Sub-Saharan"
-  }
+    location: "Casablanca, Maroc / Sub-Saharan",
+  },
 ];
 
 export default function Testimonials() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   return (
     <AnimatedPage>
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center"
+            >
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute -top-12 right-0 text-white hover:text-emerald-400 transition-colors"
+              >
+                <X className="w-8 h-8" />
+              </button>
+              <img
+                src={selectedImage}
+                alt="Agrandissement"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section - Same dark background as Home */}
       <section className="pt-40 pb-20 bg-[#020617] relative overflow-hidden">
         {/* Animated Background Gradients - Same as Home */}
@@ -87,7 +136,8 @@ export default function Testimonials() {
                 Ce que disent nos partenaires
               </h1>
               <p className="text-xl text-slate-300 leading-relaxed">
-                Ils nous font confiance pour développer leur empreinte santé en Afrique subsaharienne. Découvrez leurs retours d'expérience.
+                Ils nous font confiance pour développer leur empreinte santé en
+                Afrique subsaharienne. Découvrez leurs retours d'expérience.
               </p>
             </FadeIn>
           </div>
@@ -100,32 +150,71 @@ export default function Testimonials() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonialsList.map((testi, i) => (
               <FadeIn key={i} delay={0.1 * i} className="group">
-                <article className="h-full bg-slate-50 rounded-3xl p-10 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-200 transition-all duration-300 relative flex flex-col">
+                <article
+                  className={`h-full bg-slate-50 rounded-3xl p-10 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-200 transition-all duration-300 relative flex flex-col overflow-hidden ${testi.image ? "cursor-zoom-in" : ""}`}
+                  onClick={() => testi.image && setSelectedImage(testi.image)}
+                >
+                  {/* Background Image if available */}
+                  {testi.image && (
+                    <>
+                      <div className="absolute inset-0 z-0">
+                        <img
+                          src={testi.image}
+                          alt=""
+                          className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity duration-500 filter grayscale group-hover:grayscale-0"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-slate-50/80 to-slate-50/90 z-0" />
+                    </>
+                  )}
+
                   {/* Background Quote Icon */}
-                  <Quote className="absolute top-8 right-8 w-16 h-16 text-slate-100 group-hover:text-emerald-50 transition-colors" />
-                  
+                  <Quote className="absolute top-8 right-8 w-16 h-16 text-slate-100 group-hover:text-emerald-50 transition-colors z-10" />
+
                   {/* Stars Rating */}
                   <div className="flex gap-1 mb-4 relative z-10">
                     {[...Array(5)].map((_, idx) => (
-                      <Star key={idx} className="w-5 h-5 text-amber-400 fill-current" />
+                      <Star
+                        key={idx}
+                        className="w-5 h-5 text-amber-400 fill-current"
+                      />
                     ))}
                   </div>
-                  
+
                   <div className="relative z-10 flex-grow mb-8">
                     <p className="text-slate-700 text-lg leading-relaxed italic">
                       « {testi.quote} »
                     </p>
                   </div>
-                  
+
                   <div className="relative z-10 pt-6 border-t border-slate-100 mt-auto">
-                    <div className="font-poppins font-bold text-slate-900 mb-1">
-                      {testi.author}
+                    <div className="flex items-center gap-4 mb-3">
+                      {/* @ts-ignore */}
+                      {testi.image && (
+                        <div className="relative">
+                          <img
+                            /* @ts-ignore */
+                            src={testi.image}
+                            alt={testi.author}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute -bottom-1 -right-1 bg-emerald-500 rounded-full p-1 border-2 border-white">
+                            <Quote className="w-2 h-2 text-white fill-current" />
+                          </div>
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-poppins font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                          {testi.author}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                          <Building2 className="w-3 h-3 text-emerald-500" />
+                          {testi.role}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
-                      <Building2 className="w-4 h-4 text-emerald-500" />
-                      {testi.role}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-400 font-medium bg-white px-3 py-1.5 rounded-full w-fit border border-slate-200">
+
+                    <div className="flex items-center gap-2 text-xs text-slate-400 font-medium bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full w-fit border border-slate-200">
                       <MapPin className="w-3.5 h-3.5" />
                       {testi.location}
                     </div>
@@ -140,7 +229,7 @@ export default function Testimonials() {
       {/* Stats Section - Emerald gradient like Home charter section */}
       <section className="py-20 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTExIDBIMXYxMWgxMFYwek0xMyAwaDExdjExSDEzVjB6TTExIDEzSDF2MTFoMTBWMTN6TTEzIDEzaDExdjExSDEzVjEzIiBmaWxsPSIjZmZmZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')] opacity-[0.03]" />
-        
+
         <div className="container mx-auto px-6 relative z-10">
           <div className="grid md:grid-cols-3 gap-12 text-center">
             <FadeIn>
@@ -167,10 +256,13 @@ export default function Testimonials() {
               Prêt à développer votre laboratoire ?
             </h2>
             <p className="text-lg text-slate-300 mb-10 leading-relaxed">
-              Que vous prépariez un lancement, une restructuration de votre force de vente ou une étude marché complexe, notre équipe est à votre disposition pour analyser vos besoins en toute confidentialité.
+              Que vous prépariez un lancement, une restructuration de votre
+              force de vente ou une étude marché complexe, notre équipe est à
+              votre disposition pour analyser vos besoins en toute
+              confidentialité.
             </p>
-            <a 
-              href="/contact" 
+            <a
+              href="/contact"
               className="inline-flex items-center justify-center px-8 py-4 rounded-full text-base font-semibold bg-gradient-to-r from-emerald-500 to-green-500 text-slate-900 hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all shadow-xl"
             >
               Discuter avec un expert

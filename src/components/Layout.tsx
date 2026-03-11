@@ -235,10 +235,20 @@ export function Layout() {
                 Politique de confidentialité
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/pharm'afrik/about/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-[var(--color-secondary)] transition-colors"
               >
                 LinkedIn
+              </a>
+              <a
+                href="https://www.facebook.com/p/PharmAfrik-West-Central-Africa-100039604764922/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[var(--color-secondary)] transition-colors"
+              >
+                Facebook
               </a>
             </div>
           </div>
@@ -246,7 +256,18 @@ export function Layout() {
             <p>
               © 2026 PHARM’AFRIK – West & Central Africa. Tous droits réservés.
             </p>
-            <p className="mt-2 md:mt-0">Basé à Abidjan, Côte d'Ivoire</p>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mt-2 md:mt-0">
+              <p>Basé à Abidjan, Côte d'Ivoire</p>
+              <span className="hidden md:block text-slate-700">|</span>
+              <a
+                href="https://www.haut-numerique.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[var(--color-secondary)] transition-colors text-xs"
+              >
+                Designed by HNM
+              </a>
+            </div>
           </div>
         </div>
       </footer>

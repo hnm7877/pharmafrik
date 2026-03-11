@@ -11,9 +11,12 @@ import {
   Scale,
   Quote,
   CheckCircle2,
+  Star,
+  X,
 } from "lucide-react";
 import { AnimatedPage, FadeIn } from "../components/Layout";
 import { Carousel } from "../components/Carousel";
+import { AnimatePresence, motion } from "framer-motion";
 
 function Counter({ end, duration = 2000 }: { end: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -46,6 +49,8 @@ function Counter({ end, duration = 2000 }: { end: number; duration?: number }) {
 }
 
 export default function Home() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const activities = [
     {
       title: "Marketing-Vente",
@@ -99,27 +104,62 @@ export default function Home() {
     {
       name: "Soro Stéphane",
       role: "DG Santé+",
+      image: "/images/Soro Stéphane.jpg",
       text: "J'ai été plus que satisfait de l'accompagnement fourni par Pharm'Afrik et son équipe dans le cadre du suivi de notre projet.",
     },
     {
       name: "Dakoury Pierre",
       role: "DAF e-Sport",
+      image: "/images/Dakoury Pierre.jpg",
       text: "Pharm'Afrik m'a accompagné dans toutes mes démarches dans l'obtention de mon visa pour mes soins médicaux aux USA.",
     },
     {
       name: "Guei Serverine",
       role: "Directrice des ventes",
+      image: "/images/Guei Serverine.jpg",
       text: "Pharm'Afrik, grâce à son coaching et son suivi de mon équipe nous a permis d'augmenter notre chiffre d'affaire et notre portefeuille client.",
     },
     {
       name: "Kouakou Mélanie",
       role: "Directrice de pharmatech",
+      image: "/images/Kouakou Mélanie.jpg",
       text: "Pharm'Afrik nous a été d'une grande aide dans le processus de réalisation de nos tests clinique en plus de s'être occupé de la rédaction et de l'édition des notices de nos nouveaux produits.",
     },
   ];
 
   return (
     <AnimatedPage>
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center"
+            >
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute -top-12 right-0 text-white hover:text-emerald-400 transition-colors"
+              >
+                <X className="w-8 h-8" />
+              </button>
+              <img
+                src={selectedImage}
+                alt="Agrandissement"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Carousel />
 
       {/* Introduction Section */}
@@ -181,8 +221,8 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-secondary)] to-[var(--color-primary)] rounded-[2rem] rotate-3 opacity-20 transform scale-105" />
                 <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=2091&auto=format&fit=crop"
-                    alt="Médecins en consultation"
+                    src="https://images.unsplash.com/photo-1628348070889-cb656235b4eb?q=80&w=2070&auto=format&fit=crop"
+                    alt="Cadres de santé noirs africains"
                     className="w-full h-auto object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)]/80 to-transparent flex items-end p-8">
@@ -376,17 +416,61 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {testimonials.map((testimonial, i) => (
               <FadeIn key={i} delay={0.1 * i}>
-                <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all relative">
-                  <Quote className="w-10 h-10 text-emerald-400 mb-4 opacity-50" />
-                  <p className="text-lg text-slate-700 leading-relaxed mb-6 italic">
+                <div
+                  className={`bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all relative overflow-hidden flex flex-col ${testimonial.image ? "cursor-zoom-in" : ""}`}
+                  onClick={() =>
+                    testimonial.image && setSelectedImage(testimonial.image)
+                  }
+                >
+                  {/* Background Image if available */}
+                  {testimonial.image && (
+                    <>
+                      <div className="absolute inset-0 z-0">
+                        <img
+                          src={testimonial.image}
+                          alt=""
+                          className="w-full h-full object-cover opacity-10 hover:opacity-20 transition-opacity duration-500 filter grayscale hover:grayscale-0"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-slate-50/80 to-slate-50/90 z-0" />
+                    </>
+                  )}
+
+                  <Quote className="w-10 h-10 text-emerald-400 mb-4 opacity-50 relative z-10" />
+
+                  <div className="flex gap-1 mb-4 relative z-10">
+                    {[...Array(5)].map((_, idx) => (
+                      <Star
+                        key={idx}
+                        className="w-4 h-4 text-amber-400 fill-current"
+                      />
+                    ))}
+                  </div>
+
+                  <p className="text-lg text-slate-700 leading-relaxed mb-6 italic relative z-10 flex-grow">
                     "{testimonial.text}"
                   </p>
-                  <div>
-                    <div className="font-poppins font-bold text-slate-900">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {testimonial.role}
+
+                  <div className="flex items-center gap-4 relative z-10 mt-auto pt-6 border-t border-slate-100/50">
+                    {testimonial.image && (
+                      <div className="relative group">
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="absolute -bottom-1 -right-1 bg-emerald-500 rounded-full p-1 border-2 border-white">
+                          <Quote className="w-2 h-2 text-white fill-current" />
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-poppins font-bold text-slate-900 hover:text-emerald-600 transition-colors">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-sm text-slate-500">
+                        {testimonial.role}
+                      </div>
                     </div>
                   </div>
                 </div>
