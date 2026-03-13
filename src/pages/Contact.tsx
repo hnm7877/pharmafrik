@@ -1,7 +1,70 @@
-import { Mail, Phone, MapPin, Linkedin, Send } from "lucide-react";
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Linkedin,
+  Send,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import { AnimatedPage, FadeIn } from "../components/Layout";
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    company: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("submitting");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/contact.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "success") {
+        setStatus("success");
+        setFormData({ name: "", company: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setStatus("error");
+        setErrorMessage(data.message || "Une erreur est survenue.");
+      }
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(
+        "Impossible de contacter le serveur. Veuillez réessayer plus tard.",
+      );
+    } finally {
+      if (status !== "success") {
+        // keep loading state if success to show message, otherwise clear
+      }
+    }
+  };
+
   return (
     <AnimatedPage>
       <section className="pt-40 pb-32 min-h-screen bg-[#0b1120] text-slate-300 relative overflow-hidden">
@@ -117,10 +180,7 @@ export default function Contact() {
                 delay={0.2}
                 className="bg-[#0f172a]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl"
               >
-                <form
-                  className="space-y-6"
-                  onSubmit={(e) => e.preventDefault()}
-                >
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label
@@ -132,8 +192,12 @@ export default function Contact() {
                       <input
                         id="name"
                         type="text"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        disabled={status === "submitting"}
                         placeholder="Jean Dupont"
-                        className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all"
+                        className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div className="space-y-2">
@@ -146,8 +210,11 @@ export default function Contact() {
                       <input
                         id="company"
                         type="text"
+                        value={formData.company}
+                        onChange={handleChange}
+                        disabled={status === "submitting"}
                         placeholder="Laboratoire XYZ"
-                        className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all"
+                        className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -162,8 +229,12 @@ export default function Contact() {
                     <input
                       id="email"
                       type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      disabled={status === "submitting"}
                       placeholder="jean.dupont@laboratoire-xyz.com"
-                      className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all"
+                      className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -177,17 +248,51 @@ export default function Contact() {
                     <textarea
                       id="message"
                       rows={5}
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      disabled={status === "submitting"}
                       placeholder="Décrivez brièvement votre projet, vos produits et les pays ciblés en Afrique subsaharienne."
-                      className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all resize-none"
+                      className="w-full bg-[#1e293b]/50 border border-slate-700 rounded-xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-secondary)] focus:ring-1 focus:ring-[var(--color-secondary)] transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     ></textarea>
                   </div>
 
+                  {status === "success" && (
+                    <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-start gap-3 text-green-400">
+                      <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">
+                        Votre message a été envoyé avec succès. Nous vous
+                        répondrons dans les plus brefs délais.
+                      </p>
+                    </div>
+                  )}
+
+                  {status === "error" && (
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">
+                        {errorMessage ||
+                          "Une erreur est survenue lors de l'envoi."}
+                      </p>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-8 py-5 rounded-xl text-base font-semibold bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-secondary)]/80 text-white shadow-[0_10px_30px_rgba(34,197,94,0.2)] hover:shadow-[0_15px_40px_rgba(34,197,94,0.4)] hover:-translate-y-1 transition-all group"
+                    disabled={status === "submitting" || status === "success"}
+                    className="w-full inline-flex items-center justify-center gap-2 px-8 py-5 rounded-xl text-base font-semibold bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-secondary)]/80 text-white shadow-[0_10px_30px_rgba(34,197,94,0.2)] hover:shadow-[0_15px_40px_rgba(34,197,94,0.4)] hover:-translate-y-1 transition-all group disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
                   >
-                    Envoyer ma demande
-                    <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    {status === "submitting" ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Envoi en cours...
+                      </>
+                    ) : (
+                      <>
+                        Envoyer ma demande
+                        <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </>
+                    )}
                   </button>
                   <p className="text-xs text-center text-slate-500 mt-4">
                     Vos données sont strictement confidentielles et ne seront
