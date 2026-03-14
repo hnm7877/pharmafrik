@@ -1,6 +1,23 @@
 <?php
-// Header settings for CORS to allow requests from Vercel
-header('Access-Control-Allow-Origin: *'); // Allow all origins (or specify https://pharmafrik.vercel.app)
+// Define allowed origins
+$allowed_origins = [
+    'https://pharmafrik.vercel.app',
+    'https://pharmafrik.com',
+    'https://www.pharmafrik.com',
+    'http://localhost:5173'
+];
+
+// Get the origin of the current request
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+// Handle CORS
+if (in_array($origin, $allowed_origins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    // Fallback for development/testing or unlisted origins
+    header('Access-Control-Allow-Origin: *'); 
+}
+
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json; charset=utf-8');
