@@ -81,8 +81,58 @@ $headers = "From: no-reply@pharmafrik.com\r\n"; // Use a domain email address
 $headers .= "Reply-To: $email\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
 
-// Send email
+// Send email to admin
 if (mail($to, $subject, $email_content, $headers)) {
+    // Send auto-reply to user
+    $user_subject = "Confirmation de réception - PHARM'AFRIK";
+    
+    // Construct HTML email for auto-reply
+    $user_headers = "MIME-Version: 1.0" . "\r\n";
+    $user_headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $user_headers .= "From: PHARM'AFRIK <no-reply@pharmafrik.com>" . "\r\n";
+    $user_headers .= "Reply-To: info@pharmafrik.com" . "\r\n";
+    $user_headers .= "X-Mailer: PHP/" . phpversion();
+
+    $user_content = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+            .header { background-color: #f8fafc; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 30px 20px; }
+            .footer { font-size: 12px; color: #666; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+            .btn { display: inline-block; background-color: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2 style='color: #0f172a; margin:0;'>PHARM'AFRIK</h2>
+                <p style='margin:5px 0 0; color: #64748b;'>West & Central Africa</p>
+            </div>
+            <div class='content'>
+                <p>Bonjour <strong>$name</strong>,</p>
+                <p>Nous vous remercions de nous avoir contactés.</p>
+                <p>Votre message a bien été reçu par notre équipe. Nous l'étudierons avec la plus grande attention et reviendrons vers vous dans les plus brefs délais (généralement sous 24 à 48 heures ouvrées).</p>
+                <p>En attendant, n'hésitez pas à consulter nos activités sur notre site web.</p>
+                <center><a href='https://pharmafrik.com' class='btn'>Visiter notre site</a></center>
+                <br>
+                <p>Cordialement,<br>L'équipe PHARM'AFRIK</p>
+            </div>
+            <div class='footer'>
+                <p>Ceci est un message automatique, merci de ne pas y répondre directement.<br>
+                Si vous souhaitez nous contacter : <a href='mailto:info@pharmafrik.com'>info@pharmafrik.com</a></p>
+                <p>Riviera Bonoumin Abri 2000, Abidjan</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    // Try to send auto-reply (don't fail if this specific email fails)
+    @mail($email, $user_subject, $user_content, $user_headers);
+
     echo json_encode(['status' => 'success', 'message' => 'Votre message a été envoyé avec succès.']);
 } else {
     http_response_code(500);
