@@ -35,7 +35,11 @@ export default function Contact() {
     setErrorMessage("");
 
     try {
-      const response = await fetch("/contact.php", {
+      // IMPORTANT: Remplacez cette URL par l'URL réelle de votre fichier contact.php sur O2Switch
+      // Si votre site est hébergé sur pharmafrik.com, cela devrait être : https://pharmafrik.com/contact.php
+      const API_URL = "https://pharmafrik.com/contact.php";
+
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

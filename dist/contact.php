@@ -1,15 +1,22 @@
 <?php
-// Prevent direct access to the script
+// Header settings for CORS to allow requests from Vercel
+header('Access-Control-Allow-Origin: *'); // Allow all origins (or specify https://pharmafrik.vercel.app)
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json; charset=utf-8');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Prevent direct access to the script for other methods
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['status' => 'error', 'message' => 'Method Not Allowed']);
     exit;
 }
-
-// Header settings
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *'); // Adjust in production for security
-header('Access-Control-Allow-Headers: Content-Type');
 
 // Get JSON input
 $json = file_get_contents('php://input');
