@@ -1,27 +1,46 @@
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
   try {
-    // Forward the request to the PHP backend on O2Switch
-    const response = await fetch("https://pharmafrik.com/contact.php", {
+    const phpUrl = "https://pharmafrik.com/contact.php";
+
+    // Log for debugging (visible in Vercel logs)
+    console.log(`Forwarding request to: ${phpUrl}`);
+
+    const response = await fetch(phpUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Add a secret header if you want to secure your PHP script later
-        "X-Source": "Vercel-Function",
+        Accept: "application/json",
+        "User-Agent": "Vercel-Serverless-Function",
       },
       body: JSON.stringify(req.body),
     });
 
-    const data = await response.json();
+    // Get the raw text response first to debug if JSON parsing fails
+    const text = await response.text();
+    console.log("Response from PHP:", text);
 
-    // Return the response from PHP back to the frontend
-    return res.status(response.status).json(data);
+    if (!response.ok) {
+      return res.status(response.status).json({
+        message: `Error from PHP backend: ${response.status} ${response.statusText}`,
+        details: text,
+      });
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return res.status(200).json(data);
+    } catch (e) {
+      return res.status(500).json({
+        message: "Invalid JSON response from PHP backend",
+        rawResponse: text,
+      });
+    }
   } catch (error) {
-    console.error("Error forwarding request:", error);
+    console.error("Fetch error:", error);
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
