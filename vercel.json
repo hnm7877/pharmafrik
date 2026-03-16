@@ -1,4 +1,8 @@
 {
-  "framework": null,
-  "outputDirectory": "dist"
+  "rewrites": [
+    {
+      "source": "/api/contact",
+      "destination": "https://pharmafrik.com/contact.php"
+    }
+  ]
 }

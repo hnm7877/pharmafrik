@@ -35,9 +35,8 @@ export default function Contact() {
     setErrorMessage("");
 
     try {
-      // IMPORTANT: Remplacez cette URL par l'URL réelle de votre fichier contact.php sur O2Switch
-      // Si votre site est hébergé sur pharmafrik.com, cela devrait être : https://pharmafrik.com/contact.php
-      const API_URL = "https://pharmafrik.com/contact.php";
+      // Utilisation du proxy Vercel pour contourner les problèmes CORS
+      const API_URL = "/api/contact";
 
       const response = await fetch(API_URL, {
         method: "POST",
