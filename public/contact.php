@@ -1,32 +1,25 @@
 <?php
-// Define allowed origins
-$allowed_origins = [
-    'https://pharmafrik.vercel.app',
-    'https://pharmafrik.com',
-    'https://www.pharmafrik.com',
-    'http://localhost:5173'
-];
-
-// Get the origin of the current request
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-
-// Handle CORS
-if (in_array($origin, $allowed_origins)) {
-    header('Access-Control-Allow-Origin: ' . $origin);
+// Force CORS headers immediately
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');    // cache for 1 day
 } else {
-    // Fallback for development/testing or unlisted origins
-    header('Access-Control-Allow-Origin: *'); 
+    header('Access-Control-Allow-Origin: *');
 }
 
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+// Access-Control headers are received during OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+
+    exit(0);
+}
+
 header('Content-Type: application/json; charset=utf-8');
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
 
 // Prevent direct access to the script for other methods
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
