@@ -1,0 +1,15 @@
+<IfModule mod_headers.c>
+    # Autoriser l'origine de Vercel (et le localhost pour les tests)
+    SetEnvIf Origin "^http(s)?://(localhost:5173|pharmafrik\.vercel\.app)$" AccessControlAllowOrigin=$0
+    Header always set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    
+    # Autoriser les méthodes et les en-têtes
+    Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    Header always set Access-Control-Max-Age "86400"
+    
+    # Intercepter la requête OPTIONS pour qu'elle renvoie 200 au lieu d'être bloquée ou de passer au PHP
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>

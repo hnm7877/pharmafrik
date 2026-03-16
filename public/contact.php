@@ -1,30 +1,39 @@
 <?php
-// Force CORS headers immediately
+// ==========================================
+// 1. CORS & HEADERS (Must be first!)
+// ==========================================
+// Allow from any origin
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 86400');    // cache for 1 day
 } else {
-    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Origin: *");
 }
 
 // Access-Control headers are received during OPTIONS requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");         
-
-    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+    }
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}, Content-Type");
+    } else {
+        header("Access-Control-Allow-Headers: Content-Type");
+    }
     exit(0);
 }
 
+// ==========================================
+// 2. MAIN LOGIC
+// ==========================================
 header('Content-Type: application/json; charset=utf-8');
 
-// Prevent direct access to the script for other methods
+// Accept POST or GET (some servers rewrite POST to GET if misconfigured, but we strictly want POST data)
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    // If it's not a POST, we log it for debugging but return an error.
     http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Method Not Allowed']);
+    echo json_encode(['status' => 'error', 'message' => 'Method Not Allowed. Method was: ' . $_SERVER['REQUEST_METHOD']]);
     exit;
 }
 
