@@ -30,16 +30,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 header('Content-Type: application/json; charset=utf-8');
 
 // Accept POST or GET (some servers rewrite POST to GET if misconfigured, but we strictly want POST data)
+// If REQUEST_METHOD is missing or weird, we try to read input anyway
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // If it's not a POST, we log it for debugging but return an error.
-    http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Method Not Allowed. Method was: ' . $_SERVER['REQUEST_METHOD']]);
-    exit;
+    // FALLBACK: Allow GET for testing or specific server configs
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['test'])) {
+        // Just a ping
+        echo json_encode(['status' => 'success', 'message' => 'GET method works, but please use POST for data']);
+        exit;
+    }
+    
+    // STRICT MODE DISABLED for debugging: We try to proceed even if method is not strictly POST, 
+    // because sometimes proxies mess up headers.
+    // http_response_code(405);
+    // echo json_encode(['status' => 'error', 'message' => 'Method Not Allowed. Method was: ' . $_SERVER['REQUEST_METHOD']]);
+    // exit;
 }
 
 // Get JSON input
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
+
+// Fallback: Check standard POST fields if JSON is empty (form-data)
+if (!$data && !empty($_POST)) {
+    $data = $_POST;
+}
 
 // Check if data is valid
 if (!$data) {
