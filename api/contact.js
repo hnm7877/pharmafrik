@@ -4,25 +4,27 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Essayons avec www pour éviter une redirection 301 qui transformerait le POST en GET
     const phpUrl = "https://www.pharmafrik.com/contact.php";
 
-    // Log for debugging (visible in Vercel logs)
-    console.log(`Forwarding request to: ${phpUrl}`);
+    // We will send the data as form-urlencoded which is almost universally accepted by PHP servers
+    // instead of application/json which can trigger security rules.
+    const urlEncodedData = new URLSearchParams();
+    for (const key in req.body) {
+      urlEncodedData.append(key, req.body[key]);
+    }
 
     const response = await fetch(phpUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
         Accept: "application/json",
-        "User-Agent": "Vercel-Serverless-Function",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
-      body: JSON.stringify(req.body),
+      body: urlEncodedData.toString(),
     });
 
-    // Get the raw text response first to debug if JSON parsing fails
     const text = await response.text();
-    console.log("Response from PHP:", text);
 
     if (!response.ok) {
       return res.status(response.status).json({
