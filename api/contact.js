@@ -4,9 +4,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const phpUrl = "https://www.pharmafrik.com/contact.php";
+    // Utilisation de l'URL technique O2Switch car le domaine principal pointe vers Vercel
+    // Basé sur le login FTP visible dans les captures : ouan7198
+    const phpUrl = "http://ouan7198.odns.fr/contact.php";
 
-    // We will send the data as form-urlencoded which is almost universally accepted by PHP servers
+    // Log for debugging (visible in Vercel logs)
     // instead of application/json which can trigger security rules.
     const urlEncodedData = new URLSearchParams();
     for (const key in req.body) {
