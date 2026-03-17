@@ -4,7 +4,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const phpUrl = "https://pharmafrik.com/contact.php";
+    // Essayons avec www pour éviter une redirection 301 qui transformerait le POST en GET
+    const phpUrl = "https://www.pharmafrik.com/contact.php";
 
     // Log for debugging (visible in Vercel logs)
     console.log(`Forwarding request to: ${phpUrl}`);
