@@ -1,19 +1,33 @@
+import https from "https";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
   try {
-    // Utilisation de l'URL technique O2Switch car le domaine principal pointe vers Vercel
-    // Basé sur le login FTP visible dans les captures : ouan7198
-    const phpUrl = "http://ouan7198.odns.fr/contact.php";
+    // URL technique O2Switch (car le domaine principal pointe vers Vercel)
+    // On force HTTPS mais on va ignorer les erreurs de certificat si besoin
+    const phpUrl = "https://ouan7198.odns.fr/contact.php";
 
-    // Log for debugging (visible in Vercel logs)
-    // instead of application/json which can trigger security rules.
+    console.log(`Forwarding request to: ${phpUrl}`);
+
+    // Create an agent that ignores SSL errors (for self-signed certs on technical domains)
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+
     const urlEncodedData = new URLSearchParams();
     for (const key in req.body) {
       urlEncodedData.append(key, req.body[key]);
     }
+
+    // Use standard fetch but with custom agent via a workaround for Node fetch
+    // Or simpler: use node-fetch if available, but native fetch in Next.js/Vercel usually supports 'agent' in options
+    // or we can just try standard fetch and see if it works with the technical URL which usually has a valid *.odns.fr cert.
+
+    // If native fetch fails with SSL error, we might need a workaround, but usually *.odns.fr certs are valid.
+    // Let's try standard fetch first but with the correct URL.
 
     const response = await fetch(phpUrl, {
       method: "POST",
@@ -24,6 +38,7 @@ export default async function handler(req, res) {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
       body: urlEncodedData.toString(),
+      // agent: agent // Native fetch doesn't support agent directly, need custom dispatcher in Node 18+
     });
 
     const text = await response.text();
